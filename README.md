@@ -1,5 +1,5 @@
-# qb-truckrobbery
-Armored Truck Robbery For QB-Core
+# bj-truckrobbery
+Armored Truck Robbery For BJ-Core, originally made with QBCORE.
 
 # License
 

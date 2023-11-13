@@ -1,4 +1,4 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local BJCore = exports['core']:GetCoreObject()
 local BlowBackdoor = 0
 local SilenceAlarm = 0
 local PoliceAlert = 0
@@ -20,22 +20,22 @@ local navigator
 local navigator2
 local bag
 
-RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
-    QBCore.Functions.GetPlayerData(function(PlayerData)
+RegisterNetEvent('BJCore:Client:OnPlayerLoaded', function()
+    BJCore.Functions.GetPlayerData(function(PlayerData)
         PlayerJob = PlayerData.job
     end)
 end)
 
-RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
+RegisterNetEvent('BJCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 end)
 
 local function hintToDisplay(text)
-	exports['qb-core']:DrawText(text)
+	exports['core']:DrawText(text)
 end
 
 local function hideLastHint()
-	exports['qb-core']:HideText()
+	exports['core']:HideText()
 end
 
 local function DrawText3D(x, y, z, text)
@@ -136,7 +136,7 @@ RegisterNetEvent('AttackTransport:InfoForLspd', function(x, y, z)
 	end
 end)
 
-RegisterNetEvent('qb-armoredtruckheist:client:911alert', function()
+RegisterNetEvent('bj-armoredtruckheist:client:911alert', function()
 	if PoliceAlert == 0 then
 		local transCoords = GetEntityCoords(transport)
 		local s1, s2 = GetStreetNameAtCoord(transCoords.x, transCoords.y, transCoords.z)
@@ -146,17 +146,17 @@ RegisterNetEvent('qb-armoredtruckheist:client:911alert', function()
 		if street2 ~= nil then
 			streetLabel = streetLabel .. " " .. street2
 		end
-		TriggerServerEvent("qb-armoredtruckheist:server:callCops", streetLabel, transCoords)
+		TriggerServerEvent("bj-armoredtruckheist:server:callCops", streetLabel, transCoords)
 		PlaySoundFrontend(-1, "Mission_Pass_Notify", "DLC_HEISTS_GENERAL_FRONTEND_SOUNDS", 0)
 		PoliceAlert = 1
 	end
 end)
 
-RegisterNetEvent('qb-armoredtruckheist:client:robberyCall', function(streetLabel, coords)
+RegisterNetEvent('bj-armoredtruckheist:client:robberyCall', function(streetLabel, coords)
 	if PlayerJob.name == "police" then
 		local store = "Armored Truck"
 		PlaySound(-1, "Lose_1st", "GTAO_FM_Events_Soundset", 0, 0, 1)
-		TriggerEvent('qb-policealerts:client:AddPoliceAlert', {
+		TriggerEvent('bj-policealerts:client:AddPoliceAlert', {
 			timeOut = 10000,
 			alertTitle = "Armored Truck Robbery Attempt",
 			coords = {
@@ -174,7 +174,7 @@ RegisterNetEvent('qb-armoredtruckheist:client:robberyCall', function(streetLabel
 					detail = streetLabel,
 				},
 			},
-			callSign = QBCore.Functions.GetPlayerData().metadata["callsign"],
+			callSign = BJCore.Functions.GetPlayerData().metadata["callsign"],
 		})
 		local transG = 250
 		local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
@@ -202,7 +202,7 @@ end)
 
 function MissionNotification()
 	Wait(2000)
-	TriggerServerEvent('qb-phone:server:sendNewMail', {
+	TriggerServerEvent('phone:server:sendNewMail', {
 		sender = "The Boss",
 		subject = "New Target",
 		message = "So you are intrested in making some money? good... go get yourself a Gun and make it happen... sending you the location now.",
@@ -337,7 +337,7 @@ function startMission()
 				if warning == 0 then
 					warning = 1
 					stopAndBeAngry()
-					QBCore.Functions.Notify("Get rid of the guards before you place the bomb.", "error")
+					BJCore.Functions.Notify("Get rid of the guards before you place the bomb.", "error")
 					AlertPolice()
 				end
 
@@ -351,7 +351,7 @@ function startMission()
 						if IsControlJustPressed(0, 47) then
 							BlowBackdoor = 1
 							CheckVehicleInformation()
-							TriggerEvent("qb-armoredtruckheist:client:911alert")
+							TriggerEvent("bj-armoredtruckheist:client:911alert")
 							hideLastHint()
 							sleep = 500
 						end
@@ -382,7 +382,7 @@ function CheckVehicleInformation()
 				DetachEntity(prop)
 				AttachEntityToEntity(prop, transport, GetEntityBoneIndexByName(transport, 'door_pside_r'), -0.7, 0.0, 0.0, 0.0, 0.0, 0.0, true, true, false, true, 1, true)
 				hideLastHint()
-				QBCore.Functions.Notify('The load will be detonated in '..Config.TimeToBlow ..' seconds.', "error")
+				BJCore.Functions.Notify('The load will be detonated in '..Config.TimeToBlow ..' seconds.', "error")
 				FreezeEntityPosition(PlayerPedId(), false)
 				Wait(Config.TimeToBlow*1000)
 				local transCoords = GetEntityCoords(transport)
@@ -392,16 +392,16 @@ function CheckVehicleInformation()
 				-- ApplyForceToEntity(transport, 0, transCoords.x,transCoords.y,transCoords.z, 0.0, 0.0, 0.0, 1, false, true, true, true, true)
 				BlownUp = 1
 				lootable = 1
-				QBCore.Functions.Notify('You can start collecting cash.', "success")
+				BJCore.Functions.Notify('You can start collecting cash.', "success")
 				RemoveBlip(TruckBlip)
 			else
-				QBCore.Functions.Notify('Get out of the water', "error")
+				BJCore.Functions.Notify('Get out of the water', "error")
 			end
 		else
-			QBCore.Functions.Notify('The vehicle must be empty to place the load', "error")
+			BJCore.Functions.Notify('The vehicle must be empty to place the load', "error")
 		end
 	else
-		QBCore.Functions.Notify('You can not rob a vehicle that is moving.', "error")
+		BJCore.Functions.Notify('You can not rob a vehicle that is moving.', "error")
 	end
 end
 
@@ -454,7 +454,7 @@ function TakingMoney()
 	AttachEntityToEntity(bag, PlayerPedId(), GetPedBoneIndex(PlayerPedId(), 57005), 0.0, 0.0, -0.16, 250.0, -30.0, 0.0, false, false, false, false, 2, true)
 	TaskPlayAnim(PlayerPedId(), "anim@heists@ornate_bank@grab_cash_heels", "grab", 8.0, -8.0, -1, 1, 0, false, false, false)
 	FreezeEntityPosition(PlayerPedId(), true)
-	QBCore.Functions.Notify('You are packing cash into a bag', "success")
+	BJCore.Functions.Notify('You are packing cash into a bag', "success")
 	local _time = GetGameTimer()
 	while GetGameTimer() - _time < 20000 do
 		if IsControlPressed(0, 47) then

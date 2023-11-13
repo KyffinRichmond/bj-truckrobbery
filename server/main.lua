@@ -1,17 +1,17 @@
-local QBCore = exports['qb-core']:GetCoreObject()
+local BJCore = exports['core']:GetCoreObject()
 local ActiveMission = 0
 
 RegisterServerEvent('AttackTransport:akceptujto', function()
 	local copsOnDuty = 0
 	local _source = source
-	local xPlayer = QBCore.Functions.GetPlayer(_source)
+	local xPlayer = BJCore.Functions.GetPlayer(_source)
 	local accountMoney = xPlayer.PlayerData.money["bank"]
 	if ActiveMission == 0 then
 		if accountMoney < Config.ActivationCost then
-			TriggerClientEvent('QBCore:Notify', _source, "You need " .. Config.Currency .. "" ..Config.ActivationCost.. " in the bank to accept the mission")
+			TriggerClientEvent('BJCore:Notify', _source, "You need " .. Config.Currency .. "" ..Config.ActivationCost.. " in the bank to accept the mission")
 		else
-			for _, v in pairs(QBCore.Functions.GetPlayers()) do
-				local Player = QBCore.Functions.GetPlayer(v)
+			for _, v in pairs(BJCore.Functions.GetPlayers()) do
+				local Player = BJCore.Functions.GetPlayer(v)
 				if Player ~= nil then
 					if (Player.PlayerData.job.name == "police" or Player.PlayerData.job.type == "leo") and Player.PlayerData.job.onduty then
 						copsOnDuty = copsOnDuty + 1
@@ -23,19 +23,19 @@ RegisterServerEvent('AttackTransport:akceptujto', function()
 				xPlayer.Functions.RemoveMoney('bank', Config.ActivationCost, "armored-truck")
 				OdpalTimer()
 			else
-				TriggerClientEvent('QBCore:Notify', _source, 'Need at least '..Config.ActivePolice.. ' police to activate the mission.')
+				TriggerClientEvent('BJCore:Notify', _source, 'Need at least '..Config.ActivePolice.. ' police to activate the mission.')
 			end
 		end
 	else
-		TriggerClientEvent('QBCore:Notify', _source, 'Someone is already carrying out this mission')
+		TriggerClientEvent('BJCore:Notify', _source, 'Someone is already carrying out this mission')
 	end
 end)
 
-RegisterServerEvent('qb-armoredtruckheist:server:callCops', function(streetLabel, coords)
+RegisterServerEvent('bj-armoredtruckheist:server:callCops', function(streetLabel, coords)
     -- local place = "Armored Truck"
     -- local msg = "The Alarm has been activated from a "..place.. " at " ..streetLabel
 	-- Why is this unused?
-    TriggerClientEvent("qb-armoredtruckheist:client:robberyCall", -1, streetLabel, coords)
+    TriggerClientEvent("bj-armoredtruckheist:client:robberyCall", -1, streetLabel, coords)
 end)
 
 function OdpalTimer()
@@ -51,20 +51,20 @@ end)
 
 RegisterServerEvent('AttackTransport:graczZrobilnapad', function()
 	local _source = source
-	local xPlayer = QBCore.Functions.GetPlayer(_source)
+	local xPlayer = BJCore.Functions.GetPlayer(_source)
 	local bags = math.random(1,3)
 	local info = {
 		worth = math.random(Config.Payout.Min, Config.Payout.Max)
 	}
 	xPlayer.Functions.AddItem('markedbills', bags, false, info)
-	TriggerClientEvent('inventory:client:ItemBox', _source, QBCore.Shared.Items['markedbills'], "add")
+	TriggerClientEvent('inventory:client:ItemBox', _source, BJCore.Shared.Items['markedbills'], "add")
 
 	local chance = math.random(1, 100)
-	TriggerClientEvent('QBCore:Notify', _source, 'You took '..bags..' bags of cash from the van')
+	TriggerClientEvent('BJCore:Notify', _source, 'You took '..bags..' bags of cash from the van')
 
 	if chance >= 95 then
 		xPlayer.Functions.AddItem('security_card_01', 1)
-		TriggerClientEvent('inventory:client:ItemBox', _source, QBCore.Shared.Items['security_card_01'], "add")
+		TriggerClientEvent('inventory:client:ItemBox', _source, BJCore.Shared.Items['security_card_01'], "add")
 	end
 	Wait(2500)
 end)

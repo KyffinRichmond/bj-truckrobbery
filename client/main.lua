@@ -30,10 +30,6 @@ RegisterNetEvent('BJCore:Client:OnJobUpdate', function(JobInfo)
     PlayerJob = JobInfo
 end)
 
-local function hintToDisplay(text)
-	exports['core']:DrawText(text)
-end
-
 local function hideLastHint()
 	exports['core']:HideText()
 end
@@ -108,7 +104,7 @@ RegisterNetEvent('AttackTransport:InfoForLspd', function(x, y, z)
 				Wait(100)
 			end
 			if SilenceAlarm == 0 then
-				hintToDisplay('Press ~INPUT_DETONATE~ to silence the alarm')
+				BJCore.Functions.Notify('Press ~INPUT_DETONATE~ to silence the alarm')
 				SilenceAlarm = 1
 			end
 			if IsControlPressed(0, 47) and GuardsDead == 1 then
@@ -332,7 +328,7 @@ function startMission()
 
 				if dist <= 7 and BlownUp == 0 and PlayerJob.name ~= 'police' then
 					if BlowBackdoor == 0 then
-						hintToDisplay('Press [G] to blow up the back door and take the money')
+						BJCore.Functions.Notify('Press [G] to blow up the back door and take the money')
 						if IsControlJustPressed(0, 47) then
 							BlowBackdoor = 1
 							CheckVehicleInformation()
@@ -400,7 +396,7 @@ CreateThread(function()
             local dist = #(plyCoords - transCoords)
 			if dist <= 4.5 then
 				sleep = 0
-				hintToDisplay('Press [E] to take the money')
+				BJCore.Functions.Notify('Press [E] to take the money')
 				if IsControlJustPressed(0, 38) or IsDisabledControlJustPressed(0, 38) then
 					lootable = 0
 					TakingMoney()
@@ -446,7 +442,7 @@ function TakingMoney()
 			hideLastHint()
 			break
 		end
-		hintToDisplay('Hold [G] to bail out')
+		BJCore.Functions.Notify('Hold [G] to bail out')
 		Wait(0)
 	end
 	LootTime = GetGameTimer() - _time
